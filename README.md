@@ -3,6 +3,7 @@
 > 基于 **Spring Boot 3 + Apache ShardingSphere 5.4.1** 的高性能短链接平台。  
 > 用「基因分片法」把分组信息写入短码，查询时精准路由到分片表；配合多级缓存、DCL 防击穿与 Redis 号段发号，演示生产级短链读写链路。
 
+[![CI](https://github.com/kk18615105392/GeneLink/actions/workflows/ci.yml/badge.svg)](https://github.com/kk18615105392/GeneLink/actions/workflows/ci.yml)
 [![Java](https://img.shields.io/badge/Java-17-orange)](https://openjdk.org/projects/jdk/17/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0.12-brightgreen)](https://spring.io/projects/spring-boot)
 [![ShardingSphere](https://img.shields.io/badge/ShardingSphere-5.4.1-blue)](https://shardingsphere.apache.org/)
