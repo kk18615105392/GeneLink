@@ -3,6 +3,8 @@ server:
 
 genelink:
   base-url: http://localhost:8080
+  embedded-redis:
+    enabled: true
 
 spring:
   application:

@@ -11,6 +11,18 @@ jobs:
   test:
     name: Build & Test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
 
     steps:
       - name: Checkout
@@ -24,7 +36,14 @@ jobs:
           cache: maven
 
       - name: Run tests
-        run: mvn -B -s settings.xml test
+        env:
+          GENELINK_EMBEDDED_REDIS_ENABLED: "false"
+          SPRING_DATA_REDIS_HOST: localhost
+          SPRING_DATA_REDIS_PORT: "6379"
+        # CI 使用 Maven Central，避免国外 runner 访问阿里云镜像失败
+        run: mvn -B test
 
-      - name: Package (skip tests, already ran)
-        run: mvn -B -s settings.xml -DskipTests package
+      - name: Package
+        env:
+          GENELINK_EMBEDDED_REDIS_ENABLED: "false"
+        run: mvn -B -DskipTests package
