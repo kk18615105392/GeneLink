@@ -1,0 +1,22 @@
+# Maven target
+target/
+
+# IDE files
+.idea/
+*.iml
+*.iws
+.classpath
+.project
+.settings/
+.vscode/
+
+# Portable Maven binaries
+mvn_portable/
+
+# Local configuration overrides
+*.local
+
+# System/log files
+*.log
+.gemini/
+antigravity-ide/

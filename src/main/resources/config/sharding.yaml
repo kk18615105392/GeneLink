@@ -1,0 +1,32 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.h2.Driver
+    jdbcUrl: jdbc:h2:mem:genelink;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MYSQL
+    username: sa
+    password:
+    maximumPoolSize: 10
+    minimumIdle: 2
+
+rules:
+  - !SHARDING
+    tables:
+      link_mapping:
+        actualDataNodes: ds_0.link_mapping_${0..1}
+        tableStrategy:
+          standard:
+            shardingColumn: short_code
+            shardingAlgorithmName: gene_sharding_algorithm
+
+    shardingAlgorithms:
+      gene_sharding_algorithm:
+        type: CLASS_BASED
+        props:
+          strategy: STANDARD
+          algorithmClassName: com.genelink.config.GeneShardingAlgorithm
+
+props:
+  sql-show: false
+  allow-range-query-with-inline-sharding: true
+  check-table-metadata-enabled: false
+

@@ -1,0 +1,29 @@
+server:
+  port: 8080
+
+genelink:
+  base-url: http://localhost:8080
+
+spring:
+  application:
+    name: genelink
+
+  datasource:
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+    url: jdbc:shardingsphere:classpath:config/sharding.yaml
+    username: root
+    password:
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379

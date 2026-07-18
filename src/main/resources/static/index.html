@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GeneLink — 基因路由短链</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0e1a1f;
+      --muted: #5a6b73;
+      --line: rgba(14, 26, 31, 0.12);
+      --accent: #0d8f6a;
+      --accent-deep: #06664a;
+      --warn: #c45c26;
+      --panel: rgba(255, 255, 255, 0.78);
+      --glow: rgba(13, 143, 106, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #b8e8d6 0%, transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, #d7e8f2 0%, transparent 50%),
+        linear-gradient(160deg, #eef5f2 0%, #f7f3ea 45%, #e8eef5 100%);
+    }
+
+    .wrap {
+      width: min(920px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 3.5rem 0 4rem;
+    }
+
+    .brand {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 500;
+      letter-spacing: -0.04em;
+      margin: 0 0 0.4rem;
+      animation: rise 0.7s ease both;
+    }
+
+    .brand span { color: var(--accent); }
+
+    .tagline {
+      margin: 0 0 2.2rem;
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 36rem;
+      animation: rise 0.7s ease 0.08s both;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(10px);
+      padding: 1.4rem 1.5rem 1.6rem;
+      animation: rise 0.7s ease 0.16s both;
+      box-shadow: 0 20px 50px var(--glow);
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 0.9rem 0 0.4rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 0.85rem 0.95rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
+    }
+
+    .actions {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      padding: 0.85rem 1.2rem;
+      transition: transform 0.15s ease, background 0.2s;
+    }
+
+    button:active { transform: translateY(1px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: var(--accent-deep); }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .result {
+      margin-top: 1.4rem;
+      padding-top: 1.2rem;
+      border-top: 1px dashed var(--line);
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .result.show { display: block; }
+
+    .short-url {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 1.15rem;
+      word-break: break-all;
+      margin: 0.3rem 0 0.9rem;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.7rem;
+    }
+
+    .meta div {
+      border: 1px solid var(--line);
+      padding: 0.7rem 0.8rem;
+      background: rgba(255,255,255,0.55);
+    }
+
+    .meta strong {
+      display: block;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+
+    .error {
+      margin-top: 1rem;
+      color: var(--warn);
+      display: none;
+    }
+
+    .error.show { display: block; }
+
+    .tech {
+      margin-top: 2.5rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      animation: rise 0.7s ease 0.24s both;
+    }
+
+    .tech code {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.85em;
+      color: var(--accent-deep);
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1 class="brand">Gene<span>Link</span></h1>
+    <p class="tagline">把分组基因写入短码，查询时精准路由到分片表。Caffeine + Redis + DB 三级缓存，号段发号支撑高并发创建。</p>
+
+    <section class="panel">
+      <label for="url">长链接</label>
+      <input id="url" type="url" placeholder="https://example.com/path" value="https://www.example.com" />
+
+      <label for="gid">分组 GID</label>
+      <input id="gid" type="text" placeholder="user_group_1" value="user_group_1" />
+
+      <div class="actions">
+        <button class="btn-primary" id="createBtn" type="button">生成短链</button>
+        <button class="btn-ghost" id="healthBtn" type="button">健康检查</button>
+      </div>
+
+      <p class="error" id="error"></p>
+
+      <div class="result" id="result">
+        <label>短链地址</label>
+        <p class="short-url" id="shortUrl"></p>
+        <div class="actions">
+          <button class="btn-ghost" id="copyBtn" type="button">复制</button>
+          <button class="btn-ghost" id="openBtn" type="button">打开跳转</button>
+        </div>
+        <div class="meta" id="meta"></div>
+      </div>
+    </section>
+
+    <p class="tech">
+      技术栈：<code>基因分片</code> · <code>ShardingSphere CLASS_BASED</code> ·
+      <code>多级缓存</code> · <code>DCL</code> · <code>Redis 号段 ID</code>
+    </p>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let lastShortUrl = "";
+
+    async function createLink() {
+      $("error").classList.remove("show");
+      $("result").classList.remove("show");
+      try {
+        const res = await fetch("/api/v1/links", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            originalUrl: $("url").value.trim(),
+            gid: $("gid").value.trim()
+          })
+        });
+        const body = await res.json();
+        if (!res.ok || body.code !== 0) {
+          throw new Error(body.message || "创建失败");
+        }
+        const d = body.data;
+        lastShortUrl = d.shortUrl;
+        $("shortUrl").textContent = d.shortUrl;
+        $("meta").innerHTML = `
+          <div><strong>shortCode</strong>${d.shortCode}</div>
+          <div><strong>geneChar</strong>${d.geneChar}</div>
+          <div><strong>shard</strong>link_mapping_${d.shardIndex}</div>
+          <div><strong>gid</strong>${d.gid}</div>
+        `;
+        $("result").classList.add("show");
+      } catch (e) {
+        $("error").textContent = e.message;
+        $("error").classList.add("show");
+      }
+    }
+
+    async function health() {
+      $("error").classList.remove("show");
+      try {
+        const res = await fetch("/api/v1/health");
+        const body = await res.json();
+        alert(JSON.stringify(body.data, null, 2));
+      } catch (e) {
+        $("error").textContent = e.message;
+        $("error").classList.add("show");
+      }
+    }
+
+    $("createBtn").addEventListener("click", createLink);
+    $("healthBtn").addEventListener("click", health);
+    $("copyBtn").addEventListener("click", async () => {
+      if (!lastShortUrl) return;
+      await navigator.clipboard.writeText(lastShortUrl);
+      $("copyBtn").textContent = "已复制";
+      setTimeout(() => ($("copyBtn").textContent = "复制"), 1200);
+    });
+    $("openBtn").addEventListener("click", () => {
+      if (lastShortUrl) window.open(lastShortUrl, "_blank");
+    });
+  </script>
+</body>
+</html>
